@@ -123,3 +123,75 @@ def test24_change_box_position_status_to_unknown_status() -> None:
     box = create_a_box()
     with pytest.raises(ValueError, match="Unknown position status."):
         box.change_position_status('unknown')
+
+def test25_change_box_position_status_to_empty_string() -> None:
+    box = create_a_box()
+    with pytest.raises(ValueError, match="Unknown position status."):
+        box.change_position_status('')
+
+def test26_change_box_position_status_to_non_string() -> None:
+    box = create_a_box()
+    with pytest.raises(ValueError, match="Unknown position status."):
+        box.change_position_status(1)
+
+def test27_new_boxes_starts_with_an_empty_intentory() -> None:
+    box = create_a_box()
+    assert box.has_inventory(set())
+
+def test28_assert_orders_are_added_to_inventory() -> None:
+    box = create_a_box()
+    box.add_to_inventory('order1')
+    assert box.has_inventory({'order1'})
+    box.add_to_inventory('order2')
+    assert box.has_inventory({'order1', 'order2'})
+    assert not box.has_inventory({'order1'})
+
+def test29_assert_cannot_add_empty_order_to_inventory() -> None:
+    box = create_a_box()
+    with pytest.raises(ValueError, match="Document must be a non-empty string."):
+        box.add_to_inventory('')
+
+def test30_assert_cannot_add_non_string_order_to_inventory() -> None:
+    box = create_a_box()
+    with pytest.raises(ValueError, match="Document must be string."):
+        box.add_to_inventory(1)
+
+def test31_add_an_already_order_to_inventory_does_not_duplicate() -> None:
+    box = create_a_box()
+    box.add_to_inventory('order1')
+    box.add_to_inventory('order1')
+    assert box.has_inventory({'order1'})
+
+def test32_remove_an_order_from_inventory() -> None:
+    box = create_a_box()
+    box.add_to_inventory('order1')
+    box.add_to_inventory('order2')
+    box.remove_from_inventory('order1')
+    assert box.has_inventory({'order2'})
+
+def test33_remove_an_order_not_in_inventory_does_nothing() -> None:
+    box = create_a_box()
+    box.add_to_inventory('order1')
+    box.remove_from_inventory('order2')
+    assert box.has_inventory({'order1'})
+
+def test34_remove_an_order_from_empty_inventory_does_nothing() -> None:
+    box = create_a_box()
+    box.remove_from_inventory('order1')
+    assert box.has_inventory(set())
+
+def test35_get_inventory_size() -> None:
+    box = create_a_box()
+    assert box.get_inventory_size() == 0
+    box.add_to_inventory('order1')
+    assert box.get_inventory_size() == 1
+    box.add_to_inventory('order2')
+    assert box.get_inventory_size() == 2
+    box.add_to_inventory('order2')
+    assert box.get_inventory_size() == 2
+    box.remove_from_inventory('order1')
+    assert box.get_inventory_size() == 1
+    box.remove_from_inventory('order1')
+    assert box.get_inventory_size() == 1
+    box.remove_from_inventory('order2')
+    assert box.get_inventory_size() == 0

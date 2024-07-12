@@ -9,6 +9,7 @@ class Box():
         self.description = aDescription
         self.position = aPosition
         self.positionStatus = "active"
+        self.inventory = set()
 
     def has_boxID(self, aBoxID: str) -> bool:
         return True
@@ -44,6 +45,20 @@ class Box():
             raise ValueError("Unknown position status.")
 
         self.positionStatus = aNewPositionStatus
+
+    def has_inventory(self, anInventory: str) -> bool:
+        return self.inventory == anInventory
+    
+    def add_to_inventory(self, aDocument: str) -> None:
+        self.__asserts_for_non_empty_string__("Document", aDocument)
+
+        self.inventory.add(aDocument)
+
+    def remove_from_inventory(self, aDocument: str) -> None:
+        self.inventory.discard(aDocument)
+
+    def get_inventory_size(self) -> int:
+        return len(self.inventory)
 
     def __asserts_for_non_empty_string__(self, aValueName: str, aValue) -> None:
         if type(aValue) is not str:
