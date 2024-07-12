@@ -1,6 +1,6 @@
 import datetime
 
-class user:
+class User:
     def __init__(self, username:str, name: str, lastname: str, email: str, userDepartment: str, facility: str, lastPasswordChangeDate: datetime.datetime) -> None:
         self.__assert_username_is_valid__(username)
         self.__assert_name_is_valid__(name)

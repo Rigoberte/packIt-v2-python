@@ -1,13 +1,13 @@
 import pytest
 import datetime
 
-from user import user
+from user import User
 
 def create_a_user(username: str="username", name: str="name",
                 lastname: str="lastname", email: str="email",
                 userDepartment: str="userDepartment", facility: str="facility",
-                lastPasswordChangeDate=datetime.datetime(2024, 1, 1)) -> user:
-    return user(username, name, lastname, email, userDepartment, facility, lastPasswordChangeDate)
+                lastPasswordChangeDate=datetime.datetime(2024, 1, 1)) -> User:
+    return User(username, name, lastname, email, userDepartment, facility, lastPasswordChangeDate)
 
 def test00_create_a_user():
     test_user = create_a_user()
