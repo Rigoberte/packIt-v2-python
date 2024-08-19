@@ -2,8 +2,8 @@ import pytest
 
 from box import Box
 
-def create_a_box(type: str = "aType", description: str = "aDescription", position: str = "aPosition") -> Box:
-    return Box(type, description, position)
+def create_a_box(boxID: str = "AAAAAAA", type: str = "aType", description: str = "aDescription", position: str = "aPosition") -> Box:
+    return Box(boxID, type, description, position)
 
 def test00_create_a_box() -> None:
     box = create_a_box()
@@ -18,38 +18,38 @@ def test02_new_boxes_starts_with_status_active() -> None:
     assert box.has_box_status('active')
 
 def test03_new_boxes_starts_with_its_type() -> None:
-    box = create_a_box('aType')
+    box = create_a_box(type='aType')
     assert box.has_type('aType')
 
 def test04_new_boxes_starts_with_its_type_deny_other_types() -> None:
-    box = create_a_box('aType')
+    box = create_a_box(type='aType')
     assert not box.has_type('anotherType')
     assert not box.has_type('')
 
 def test05_new_boxes_cannot_starts_with_empty_type() -> None:
     with pytest.raises(ValueError, match="Type must be a non-empty string."):
-        create_a_box('')
+        create_a_box(type='')
 
 def test06_new_boxes_cannot_starts_with_non_string_type() -> None:
     with pytest.raises(ValueError, match="Type must be string."):
-        create_a_box(1)
+        create_a_box(type=1)
 
 def test07_new_boxes_starts_with_its_description() -> None:
-    box = create_a_box('aType', 'aDescription')
+    box = create_a_box(description='aDescription')
     assert box.has_description('aDescription')
 
 def test08_new_boxes_starts_with_its_description_deny_other_descriptions() -> None:
-    box = create_a_box('aType', 'aDescription')
+    box = create_a_box(description='aDescription')
     assert not box.has_description('anotherDescription')
     assert not box.has_description('')
 
 def test09_new_boxes_cannot_starts_with_empty_description() -> None:
     with pytest.raises(ValueError, match="Description must be a non-empty string."):
-        create_a_box('aType', '')
+        create_a_box(description='')
 
 def test10_new_boxes_cannot_starts_with_non_string_description() -> None:
     with pytest.raises(ValueError, match="Description must be string."):
-        create_a_box('aType', 1)
+        create_a_box(description=1)
 
 def test11_new_boxes_starts_on_its_position() -> None:
     box = create_a_box(position='aPosition')
@@ -182,16 +182,24 @@ def test34_remove_an_order_from_empty_inventory_does_nothing() -> None:
 
 def test35_get_inventory_size() -> None:
     box = create_a_box()
-    assert box.get_inventory_size() == 0
+    assert box.has_inventory_size(0)
     box.add_to_inventory('order1')
-    assert box.get_inventory_size() == 1
+    assert box.has_inventory_size(1)
     box.add_to_inventory('order2')
-    assert box.get_inventory_size() == 2
+    assert box.has_inventory_size(2)
     box.add_to_inventory('order2')
-    assert box.get_inventory_size() == 2
+    assert box.has_inventory_size(2)
     box.remove_from_inventory('order1')
-    assert box.get_inventory_size() == 1
+    assert box.has_inventory_size(1)
     box.remove_from_inventory('order1')
-    assert box.get_inventory_size() == 1
+    assert box.has_inventory_size(1)
     box.remove_from_inventory('order2')
-    assert box.get_inventory_size() == 0
+    assert box.has_inventory_size(0)
+
+def test36_assert_boxID_cannot_be_an_empty_string() -> None:
+    with pytest.raises(ValueError, match="Box ID must be a non-empty string."):
+        create_a_box(boxID='')
+
+def test37_assert_boxID_cannot_be_a_non_string() -> None:
+    with pytest.raises(ValueError, match="Box ID must be string."):
+        create_a_box(boxID=1)

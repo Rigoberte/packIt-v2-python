@@ -70,6 +70,10 @@ class User:
         self.__asserts_facility_is_valid__(facility)
         self.facility = facility
 
+    def add_username_into_record_for_new_entry_of_audit_trail(self, audit_trail, boxID, action, from_position, to_position, datetime):
+        audit_trail.add_entry(boxID, action, from_position, to_position, self.username, datetime)
+
+    # Private methods
     def __asserts_for_non_empty_string__(self, aValueName: str, aValue) -> None:
         if aValue == "":
             raise ValueError(aValueName + " must be a non-empty string.")

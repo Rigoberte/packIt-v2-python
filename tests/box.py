@@ -1,18 +1,22 @@
+from documentsTable import DocumentsTable
+
 class Box():
-    def __init__(self, aType: str, aDescription: str, aPosition: str) -> None:
+    def __init__(self, boxID: str, aType: str, aDescription: str, aPosition: str) -> None:
+        self.__asserts_for_non_empty_string__("Box ID", boxID)
         self.__assert_type_is_valid__(aType)
         self.__assert_description_is_valid__(aDescription)
         self.__assert_position_is_valid__(aPosition)
 
+        self.boxID = boxID
         self.type = aType
-        self.boxStatus = "active"
+        self.boxStatus = "Y"
         self.description = aDescription
         self.position = aPosition
-        self.positionStatus = "active"
-        self.inventory = set()
+        self.positionStatus = "ACTIVE"
+        self.inventoryTable = DocumentsTable()
 
     def has_boxID(self, aBoxID: str) -> bool:
-        return True
+        return self.boxID == aBoxID
     
     def has_box_status(self, aStatus: str) -> bool:
         return self.boxStatus == aStatus
@@ -30,7 +34,7 @@ class Box():
         return self.positionStatus == aPositionStatus
     
     def change_box_status(self, aNewStatus: str) -> None:
-        if aNewStatus != "active" and aNewStatus != "inactive":
+        if aNewStatus != "ACTIVE" and aNewStatus != "INACTIVE":
             raise ValueError("Unknown box status.")
 
         self.boxStatus = aNewStatus
@@ -41,24 +45,27 @@ class Box():
         self.position = aNewPosition
 
     def change_position_status(self, aNewPositionStatus: str) -> None:
-        if aNewPositionStatus != "active" and aNewPositionStatus != "inactive":
+        if aNewPositionStatus != "ACTIVE" and aNewPositionStatus != "INACTIVE":
             raise ValueError("Unknown position status.")
 
         self.positionStatus = aNewPositionStatus
 
-    def has_inventory(self, anInventory: str) -> bool:
-        return self.inventory == anInventory
+    def has_inventory(self, anInventory: set) -> bool:
+        return self.inventoryTable.check_inventory_of_box(anInventory, self.boxID)
     
     def add_to_inventory(self, aDocument: str) -> None:
         self.__asserts_for_non_empty_string__("Document", aDocument)
 
-        self.inventory.add(aDocument)
+        self.inventoryTable.add_entry(aDocument, self.boxID)
 
     def remove_from_inventory(self, aDocument: str) -> None:
-        self.inventory.discard(aDocument)
+        self.inventoryTable.remove_entry(aDocument)
 
-    def get_inventory_size(self) -> int:
-        return len(self.inventory)
+    def has_inventory_size(self, expected_count) -> bool:
+        return self.inventoryTable.has_entry_count(expected_count)
+
+    def add_box_to_box_table(self, aBoxesTable) -> None:
+        aBoxesTable.add_entry(self.boxID, self.boxStatus, self.type, self.description, self.position, self.positionStatus)
 
     def __asserts_for_non_empty_string__(self, aValueName: str, aValue) -> None:
         if type(aValue) is not str:
